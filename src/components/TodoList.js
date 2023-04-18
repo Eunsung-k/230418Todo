@@ -12,6 +12,7 @@ const TodoList = () => {
   // 상태를 관리하는 useState 훅을 사용하여 할 일 목록과 입력값을 초기화합니다.
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
 
   // addTodo 함수는 입력값을 이용하여 새로운 할 일을 목록에 추가하는 함수입니다.
   const addTodo = () => {
@@ -24,8 +25,9 @@ const TodoList = () => {
     //   completed: 완료 여부,
     // }
     // ...todos => {id: 1, text: "할일1", completed: false}, {id: 2, text: "할일2", completed: false}}, ..
-    setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
+    setTodos([...todos, { id: Date.now(), text: input, completed: false, date: selectedDate }]);
     setInput("");
+    setSelectedDate(null);
   };
 
   // toggleTodo 함수는 체크박스를 눌러 할 일의 완료 상태를 변경하는 함수입니다.
@@ -52,6 +54,10 @@ const TodoList = () => {
       })
     );
   };
+  // 할일 정렬
+  const sortTodos = (todos) => {
+    return todos.sort((a,b) => new Date(a.date) - new Date(b.date));
+  };
 
   // 컴포넌트를 렌더링합니다.
   return (
@@ -59,6 +65,7 @@ const TodoList = () => {
       <h1 className="text-xl mb-4 font-bold underline underline-offset-4 decoration-wavy">
         Todo List
       </h1>
+      <div className={styles.inputContainer}></div>
       {/* 할 일을 입력받는 텍스트 필드입니다. */}
       <input
         type="text"
@@ -73,6 +80,12 @@ const TodoList = () => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
+      <input
+        type="date"
+        className={styles.itemInput}
+        value={selectedDate}
+        onChange={(e) => setSelectedDate(e.target.value)} 
+        />
       {/* 할 일을 추가하는 버튼입니다. */}
       <div class="grid">
         <button
@@ -91,7 +104,7 @@ const TodoList = () => {
           //   background-color: #fff;
           //   color: #0070f3;
           // }
-          className="w-40 justify-self-end p-1 mb-4 bg-blue-500 text-white border border-blue-500 rounded hover:bg-white hover:text-blue-500"
+          className="w-40 justify-self-end p-1 mb-4 bg-pink-500 text-white border border-pink-500 rounded hover:bg-white hover:text-pink-500"
           onClick={addTodo}
         >
           Add Todo
@@ -99,7 +112,7 @@ const TodoList = () => {
       </div>
       {/* 할 일 목록을 렌더링합니다. */}
       <ul>
-        {todos.map((todo) => (
+        {sortTodos(todos).map((todo) => (
           <TodoItem
             key={todo.id}
             todo={todo}
